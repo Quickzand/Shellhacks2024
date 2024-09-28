@@ -17,10 +17,11 @@ CREATE TABLE RECIPES(
 
 CREATE TABLE RECIPE_ITEMS(
     ID INT AUTO_INCREMENT PRIMARY KEY,
+    RECIPE_ID INT,
     ITEM_ID INT,
     AMOUNT FLOAT NOT NULL,
     UNIT ENUM("tbsp", "tsp", "cup", "oz", "lb"),
-    FOREIGN KEY (ID) REFERENCES RECIPES(ID),
+    FOREIGN KEY (RECIPE_ID) REFERENCES RECIPES(ID),
     FOREIGN KEY (ITEM_ID) REFERENCES ITEMS(ID)
 );
 
@@ -29,3 +30,11 @@ CREATE TABLE GROCERY_LIST(
     AMOUNT FLOAT NOT NULL,
     UNIT ENUM("tbsp", "tsp", "cup", "oz", "lb")
 );
+
+-- Testing time wooooo
+insert into RECIPES (RECIPE_NAME) values ("Pasta");
+insert into RECIPES (RECIPE_NAME) values ("Pizza");
+
+insert into ITEMS (ITEM_NAME, AMOUNT, UNIT) values ("Pepperoni", 12, 4);
+
+insert into RECIPE_ITEMS (RECIPE_ID, ITEM_ID, AMOUNT, UNIT) values (2, 1, 2, 4);
