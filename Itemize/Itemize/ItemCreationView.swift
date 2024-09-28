@@ -14,6 +14,9 @@ struct ItemCreationView: View {
     @State private var showingAlert = false
     @State private var alertMessage = ""
     
+    let units = ["Teaspon (tsp)", "Tablespoon(tbsp)", "Fluid Ounce (fl oz)", "Cup", "Pint", "Quart", "Ounce", "Pound (lb)"]
+    
+
     var body: some View {
         Form {
             Section(header: Text("Item Details")) {
@@ -21,7 +24,13 @@ struct ItemCreationView: View {
                 Stepper(value: $item.amount, in: 0...1000) {
                     Text("Amount: \(item.amount)")
                 }
-                TextField("Unit", text: $item.unit)
+                Picker("Unit", selection: $item.unit) {
+                                        ForEach(units, id: \.self) { unit in
+                                            Text(unit).tag(unit)
+                                        }
+                                    }
+                .pickerStyle(MenuPickerStyle())
+                                    .padding(.top, 4)
                 TextField("Price", value: $item.price, format: .currency(code: "USD"))
                     .keyboardType(.decimalPad)
             }
