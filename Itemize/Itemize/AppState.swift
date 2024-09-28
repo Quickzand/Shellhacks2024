@@ -24,7 +24,7 @@ class AppState : ObservableObject {
     ]
     
     @Published var recipes: [Recipe] = [
-        Recipe(id: "1", name: "Spaghetti Bolognese", description: "A classic Italian pasta dish.", details: "This hearty dish is made with ground beef, tomatoes, and a mix of spices. Serve with grated Parmesan cheese.",
+        Recipe(id: "1", name: "Spaghetti Bolognese", description: "A classic Italian pasta dish.", notes: "Quick and easy. SO GOOD.",
                ingredients: ["200g Spaghetti", "100g Ground Beef", "50g Tomato Sauce", "Salt", "Pepper"],
                steps: [
                    "Cook spaghetti according to package instructions.",
@@ -33,7 +33,7 @@ class AppState : ObservableObject {
                    "Serve over spaghetti."
                ]),
         
-        Recipe(id: "2", name: "Chicken Curry", description: "A flavorful curry with tender chicken.", details: "Made with coconut milk, chicken, and a blend of spices. Best served with rice.",
+        Recipe(id: "2", name: "Chicken Curry", description: "A flavorful curry with tender chicken.", notes: "Yum!",
                ingredients: ["300g Chicken", "200ml Coconut Milk", "1 Onion", "2 tbsp Curry Powder"],
                steps: [
                    "Chop the onion and sauté until golden.",
@@ -42,7 +42,7 @@ class AppState : ObservableObject {
                    "Simmer until chicken is cooked."
                ]),
 
-        Recipe(id: "3", name: "Caesar Salad", description: "Crisp romaine with Caesar dressing.", details: "A refreshing salad with romaine lettuce, croutons, and Caesar dressing topped with Parmesan cheese.",
+        Recipe(id: "3", name: "Caesar Salad", description: "Crisp romaine with Caesar dressing.", notes: "cheap and quick",
                ingredients: ["1 Romaine Lettuce", "50g Croutons", "2 tbsp Caesar Dressing", "Parmesan Cheese"],
                steps: [
                    "Chop the romaine lettuce.",
@@ -51,7 +51,7 @@ class AppState : ObservableObject {
                    "Top with Parmesan cheese."
                ]),
 
-        Recipe(id: "4", name: "Vegetable Stir Fry", description: "A colorful mix of vegetables stir-fried in a savory sauce.", details: "Made with bell peppers, broccoli, carrots, and soy sauce, served over rice.",
+        Recipe(id: "4", name: "Vegetable Stir Fry", description: "A colorful mix of vegetables stir-fried in a savory sauce.", notes: "Good for a quick meal.",
                ingredients: ["1 Bell Pepper", "100g Broccoli", "2 Carrots", "2 tbsp Soy Sauce", "1 tbsp Olive Oil"],
                steps: [
                    "Chop all vegetables into bite-sized pieces.",
@@ -61,7 +61,7 @@ class AppState : ObservableObject {
                    "Serve hot over rice."
                ]),
 
-        Recipe(id: "5", name: "Margherita Pizza", description: "A simple pizza topped with fresh tomatoes and basil.", details: "Classic Neapolitan pizza with mozzarella cheese, fresh basil, and a drizzle of olive oil.",
+        Recipe(id: "5", name: "Margherita Pizza", description: "A simple pizza topped with fresh tomatoes and basil.", notes: "Use homemade dough",
                ingredients: ["1 Pizza Dough", "100g Mozzarella Cheese", "2 Tomatoes", "Fresh Basil", "Olive Oil"],
                steps: [
                    "Preheat the oven to 250°C (482°F).",
@@ -71,7 +71,7 @@ class AppState : ObservableObject {
                    "Bake for 10-12 minutes until crust is golden."
                ]),
 
-        Recipe(id: "6", name: "Chocolate Chip Cookies", description: "Soft and chewy cookies loaded with chocolate chips.", details: "These cookies are perfect for dessert or a snack.",
+        Recipe(id: "6", name: "Chocolate Chip Cookies", description: "Soft and chewy cookies loaded with chocolate chips.", notes: "fantastic!",
                ingredients: ["200g Flour", "100g Sugar", "100g Brown Sugar", "100g Butter", "1 Egg", "100g Chocolate Chips"],
                steps: [
                    "Preheat the oven to 180°C (350°F).",
@@ -82,7 +82,7 @@ class AppState : ObservableObject {
                    "Bake for 10-12 minutes until golden."
                ]),
 
-        Recipe(id: "7", name: "Pancakes", description: "Fluffy pancakes for a perfect breakfast.", details: "These pancakes are quick to make and delicious to eat.",
+        Recipe(id: "7", name: "Pancakes", description: "Fluffy pancakes for a perfect breakfast.", notes: "the kids love these!",
                ingredients: ["150g Flour", "2 Eggs", "200ml Milk", "1 tbsp Baking Powder", "1 tbsp Sugar"],
                steps: [
                    "In a bowl, mix flour, baking powder, and sugar.",
@@ -92,7 +92,7 @@ class AppState : ObservableObject {
                    "Cook until bubbles form, then flip and cook until golden."
                ]),
 
-        Recipe(id: "8", name: "Grilled Salmon", description: "Perfectly grilled salmon fillet.", details: "Served with lemon and herbs, paired with a side of asparagus.",
+        Recipe(id: "8", name: "Grilled Salmon", description: "Perfectly grilled salmon fillet.", notes: "so good",
                ingredients: ["2 Salmon Fillets", "1 Lemon", "2 tbsp Olive Oil", "Salt", "Pepper"],
                steps: [
                    "Preheat the grill to medium-high heat.",
@@ -102,7 +102,7 @@ class AppState : ObservableObject {
                    "Serve with lemon wedges and asparagus."
                ]),
 
-        Recipe(id: "9", name: "Beef Tacos", description: "Delicious tacos filled with seasoned beef.", details: "These tacos are quick to prepare and packed with flavor.",
+        Recipe(id: "9", name: "Beef Tacos", description: "Delicious tacos filled with seasoned beef.", notes: "taco tuesday hit!",
                ingredients: ["200g Ground Beef", "4 Taco Shells", "1 Onion", "2 tbsp Taco Seasoning", "Lettuce", "Tomato"],
                steps: [
                    "Brown ground beef in a skillet.",
@@ -112,7 +112,7 @@ class AppState : ObservableObject {
                    "Serve with salsa if desired."
                ]),
 
-        Recipe(id: "10", name: "Quinoa Salad", description: "A healthy salad with quinoa and vegetables.", details: "Packed with nutrients and perfect as a side dish or light meal.",
+        Recipe(id: "10", name: "Quinoa Salad", description: "A healthy salad with quinoa and vegetables.", notes: "didn't like this",
                ingredients: ["100g Quinoa", "1 Cucumber", "200g Cherry Tomatoes", "1 Bell Pepper", "2 tbsp Olive Oil", "Lemon Juice"],
                steps: [
                    "Cook quinoa according to package instructions.",
@@ -122,6 +122,7 @@ class AppState : ObservableObject {
                    "Toss to combine and serve chilled."
                ])
     ]
+
 
     func deleteRecipe(id: String) {
         // Find the index of the recipe with the given id

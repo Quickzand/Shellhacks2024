@@ -11,7 +11,7 @@ struct Recipe: Hashable {
     var id : String = UUID().uuidString
     var name: String
     var description: String
-    var details: String
+    var notes: String
     var ingredients: [String]
     var steps: [String]
 }

@@ -11,7 +11,6 @@ struct ContentView: View {
     @EnvironmentObject var appState: AppState
     enum TabSelection  {
         case recipes
-        case scan
         case items
     }
     
