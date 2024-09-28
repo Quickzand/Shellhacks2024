@@ -12,7 +12,7 @@ struct ItemsView: View {
     @State var editMode : Bool = false
     var body: some View {
         List {
-            ForEach(appState.items , id: \.ID) { item in
+            ForEach(appState.items , id: \.id) { item in
                 ItemsListItemView(item: item, editMode: $editMode)
             }
         }
@@ -60,7 +60,7 @@ struct ItemsListItemView : View {
                                 message: Text("Are you sure you want to delete \(item.name)?"),
                                 primaryButton: .destructive(Text("Delete")) {
                                     // Confirm deletion
-                                    appState.deleteItem(id: item.ID)
+                                    appState.deleteItem(id: item.id)
                                 },
                                 secondaryButton: .cancel()
                             )

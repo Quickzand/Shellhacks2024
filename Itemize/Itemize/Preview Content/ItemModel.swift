@@ -9,9 +9,9 @@ import Foundation
 
 
 struct Item : Hashable {
-    var ID : String = UUID().uuidString
+    var id : String = UUID().uuidString
     var name : String = ""
-    var amount : Int = 0
+    var amount : Double = 0
     var unit : String = ""
     var price : Double = 0
 }

@@ -17,17 +17,37 @@ struct ContentView: View {
     @State private var selectedTab: TabSelection = .recipes
     
     @State private var isShowingScanner: Bool = false
+    
+    
     @State private var scannedImages: [UIImage] = []
     
     
+    func isSimulator() -> Bool {
+           #if targetEnvironment(simulator)
+           return true
+           #else
+           return false
+           #endif
+       }
+    
     var body: some View {
         NavigationView {
+            if appState.isLoading {
+                VStack {
+                    HStack {
+                        Text("Processing Scan...")
+                        ProgressView().progressViewStyle(.circular)
+                    }
+                }
+            }
+            else {
                 switch selectedTab {
                 case .recipes:
                     RecipesView()
                 case .items:
                     ItemsView()
                 }
+            }
                 
         }
         .sheet(isPresented: $isShowingScanner) {
@@ -35,6 +55,26 @@ struct ContentView: View {
                   self.scannedImages = scannedImages
               }
           }
+        .sheet(isPresented: $appState.showScannedItems) {
+            VStack {
+                Text("Here's what was added from your scan:")
+                    .font(.headline)
+                    .padding()
+                List {
+                    ForEach(appState.addedItems , id: \.id) { item in
+                        ItemsListItemView(item: item, editMode: .constant(false))
+                    }
+                }.frame(maxHeight: .infinity)
+            }
+            .toolbar {
+                               ToolbarItem(placement: .cancellationAction) {
+                                   Button("Done") {
+                                       appState.showScannedItems = false
+                                   }
+                               }
+                           }
+            
+        }
         .toolbar {
             ToolbarItemGroup(placement: .bottomBar) {
                 HStack(alignment:.bottom) {
@@ -49,7 +89,11 @@ struct ContentView: View {
                     }.foregroundStyle(selectedTab == .recipes ? Color.blue : Color.primary)
                     
                     Button() {
-                        isShowingScanner = true
+                        if isSimulator() {
+                            appState.testRequest()
+                        } else {
+                            isShowingScanner = true
+                        }
                     } label: {
                         VStack (spacing: 10){
                             Image(systemName: "barcode.viewfinder")
@@ -73,7 +117,6 @@ struct ContentView: View {
                 }
             }
         }
-        .environmentObject(AppState())
     }
 }
 
