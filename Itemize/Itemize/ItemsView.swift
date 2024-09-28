@@ -100,23 +100,20 @@ struct ItemCreationView: View {
                 TextField("Price", value: $price, format: .currency(code: "USD"))
                     .keyboardType(.decimalPad)
             }
-            
-            Button(action: {
-                if validateItem() {
-                    saveItem()
-                    presentationMode.wrappedValue.dismiss()
-                }
-            }) {
-                Text(item == nil ? "Log Item" : "Save Changes") // Change button text based on context
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
-            }
         }
         .navigationTitle(item == nil ? "Log New Item" : "Edit Item") // Change title based on context
-        .onAppear(perform: loadItemValues) // Load values if editing
+        .navigationBarItems(
+            leading: Button("Cancel") {
+                presentationMode.wrappedValue.dismiss() // Dismiss the view without saving
+            },
+            trailing: Button("Save") {
+                if validateItem() {
+                    saveItem()
+                    presentationMode.wrappedValue.dismiss() // Dismiss after saving
+                }
+            }
+        )
+        .onAppear(perform: loadItemValues)
         .alert(isPresented: $showingAlert) {
             Alert(title: Text("Missing Information"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
         }
