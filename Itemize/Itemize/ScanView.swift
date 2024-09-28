@@ -26,12 +26,14 @@ struct DocumentScannerView: UIViewControllerRepresentable {
         }
 
         func documentCameraViewController(_ controller: VNDocumentCameraViewController, didFinishWith scan: VNDocumentCameraScan) {
-            var scannedImages = [UIImage]()
-            for pageIndex in 0..<scan.pageCount {
-                let image = scan.imageOfPage(at: pageIndex)
-                scannedImages.append(image)
+            guard scan.pageCount > 0 else {
+                controller.dismiss(animated: true)
+                return
             }
-            parent.onScanCompletion(scannedImages)
+
+            // Only use the first scanned page
+            let firstPageImage = scan.imageOfPage(at: 0)
+            parent.onScanCompletion([firstPageImage])
             controller.dismiss(animated: true)
         }
 
