@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Item : Hashable {
+struct Item : Hashable, Identifiable {
     var id : String = UUID().uuidString
     var name : String = ""
     var amount : Double = 0
