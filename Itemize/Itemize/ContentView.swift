@@ -17,19 +17,25 @@ struct ContentView: View {
     
     @State private var selectedTab: TabSelection = .recipes
     
+    @State private var isShowingScanner: Bool = false
+    @State private var scannedImages: [UIImage] = []
+    
     
     var body: some View {
         NavigationView {
                 switch selectedTab {
                 case .recipes:
                     RecipesView()
-                case .scan:
-                    ScanView()
                 case .items:
                     ItemsView()
                 }
                 
         }
+        .sheet(isPresented: $isShowingScanner) {
+              DocumentScannerView { scannedImages in
+                  self.scannedImages = scannedImages
+              }
+          }
         .toolbar {
             ToolbarItemGroup(placement: .bottomBar) {
                 HStack(alignment:.bottom) {
@@ -44,16 +50,16 @@ struct ContentView: View {
                     }.foregroundStyle(selectedTab == .recipes ? Color.blue : Color.primary)
                     
                     Button() {
-                        selectedTab = .scan
+                        isShowingScanner = true
                     } label: {
                         VStack (spacing: 10){
                             Image(systemName: "barcode.viewfinder")
                                 .background(Circle().fill(Color.orange).frame(width:75 , height: 75))
-                                .foregroundStyle(selectedTab == .scan ? Color.blue : Color.white)
+                                .foregroundStyle( Color.white)
                                 .font(.system(size: 40))
                             Text("Scan")
                         }
-                    }.foregroundStyle(selectedTab == .scan ? Color.blue : Color.primary)
+                    }.foregroundStyle(Color.primary)
                     .padding(.horizontal, 10)
                     
                     Button() {
