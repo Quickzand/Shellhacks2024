@@ -1,3 +1,95 @@
 **/DS_Store
 .DS_Store
 node_modules
+
+
+# Xcode
+# Keep user-specific and system-generated files out of version control
+
+## User settings
+xcuserdata/
+
+## Build products
+build/
+DerivedData/
+
+## Logs
+*.log
+
+## Intermediate Build Files
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+
+## Project files
+*.pbxuser
+*.xcscmblueprint
+*.xccheckout
+*.xcuserstate
+
+## Scheme management
+xcshareddata/xcschemes/*
+
+## Playgrounds
+timeline.xctimeline
+playground.xcworkspace
+
+## Swift Package Manager
+.build/
+Package.resolved
+
+## CocoaPods
+Pods/
+
+## Carthage
+Carthage/Build/
+
+## Accio
+Dependencies/
+.accio/
+
+## fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+
+## Code Injection
+iOSInjectionProject/
+
+## AppCode
+.idea/
+
+## Other
+*.moved-aside
+*.swp
+*.swo
+.DS_Store
+
+# macOS files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Thumbnails
+._*
+
+# Files that might appear at the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+.xcuserstate
+Itemize/Itemize.xcodeproj/project.xcworkspace/xcuserdata/matthew.xcuserdatad/UserInterfaceState.xcuserstate
+*.xcuserstate
+Itemize/Itemize.xcodeproj/project.xcworkspace/xcuserdata/matthew.xcuserdatad/UserInterfaceState.xcuserstate
