@@ -17,6 +17,8 @@ class AppState : ObservableObject {
     
     @Published var addedItems : [Item] = []
     
+    @Published var groceries : [Item] = []
+    
 
     @Published var isLoading : Bool = false
     
@@ -129,6 +131,18 @@ class AppState : ObservableObject {
             recipes.remove(at: index) // Remove the recipe if found
         }
     }
+    
+    func addToGroceries(item: Item) {
+        if !groceries.contains(where: { $0.id == item.id }) {
+            groceries.append(item)
+        }
+    }
+
+    func removeFromGroceries(item: Item) {
+        if let index = groceries.firstIndex(where: { $0.id == item.id }) {
+            groceries.remove(at: index)
+        }
+    }
 
 
     
@@ -147,10 +161,10 @@ class AppState : ObservableObject {
     func testRequest() {
 //        Pick a number between 1 and 5
         var number = Int.random(in: 1...5)
-        number = 1
         isLoading = true
+        print("Starting scan of receipt\(number).png")
         if let imageData = UIImage(named: "receipt\(number).png")?.pngData() {
-            chatGPTAnalyzeImage(with: imageData, apiKey: apiKey, prompt: "[NO PROSE] [OUTPUT ONLY JSON] Based off this receipt, generate JSON corresponding to different paremeters the items in the list. It should look like [{itemName: name, amount: amount, unit: unit, price: price}], if you do not know the data for sure, give your best estimate. If an item is not a grocery, ignore it. If you can simplify something, please do so. For example, dont name something boneless, skinless, chicken breast, just name is chicken breast. Dont say organic onions, just say onions. For example, if you have a bag of rice, say it is rice. FOr units, never say packs of or bags of, give weights or volumes instead. Additionally, here is a list of items, if the item is already in the list, include the item id in the output. For example, if you see chicken breast in the list with an id of 123, the ouput should look like {itemName: chicken breast, amount: 1, unit: kg, price: 10, id: 123}. Ensure units stay consistent as well. Here are the items: \(items)")
+            chatGPTAnalyzeImage(with: imageData, apiKey: apiKey, prompt: "[NO PROSE] [OUTPUT ONLY JSON] Based off this receipt, generate JSON corresponding to different paremeters the items in the list. It should look like [{itemName: name, amount: amount, unit: unit, price: price}], if you do not know the data for sure, give your best estimate. If an item is not a grocery, ignore it. If you can simplify something, please do so. For example, dont name something boneless, skinless, chicken breast, just name is chicken breast. Dont say organic onions, just say onions. For example, if you have a bag of rice, say it is rice. FOr units, never say packs of or bags of, give weights or volumes instead. USE IMPERIAL AMERICAN UNITS. Additionally, here is a list of items, if the item is already in the list, include the item id in the output. For example, if you see chicken breast in the list with an id of 123, the ouput should look like {itemName: chicken breast, amount: 1, unit: kg, price: 10, id: 123}. Ensure units stay consistent as well. Here are the items: \(items)")
             
         }
     }
@@ -214,6 +228,8 @@ class AppState : ObservableObject {
             
             // Parse the response
             do {
+                print(data)
+                print(try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any])
                 if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
                    let choices = json["choices"] as? [[String: Any]],
                    let message = choices.first?["message"] as? [String: Any],
@@ -222,7 +238,7 @@ class AppState : ObservableObject {
                     content = content.replacingOccurrences(of: "```json", with: "")
                     content = content.replacingOccurrences(of: "```", with: "")
                     content = content.trimmingCharacters(in: .whitespacesAndNewlines)
-                    
+                    print("HERE2")
                     // The content is a JSON string, we need to decode it.
                     if let jsonData = content.data(using: .utf8) {
                         if let itemsArray = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [[String: Any]] {
