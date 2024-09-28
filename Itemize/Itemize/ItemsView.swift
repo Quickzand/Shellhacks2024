@@ -16,16 +16,12 @@ struct ItemsView: View {
     var body: some View {
         List {
             ForEach(appState.items, id: \.id) { item in
-                ItemsListItemView(item: item)
-                    .onTapGesture {
-                        if isEditingMode {
-                            selectedItem = item // Set the selected item for editing
-                        }
-                    }
+                ItemsListItemView(item: item, isEditingMode: $isEditingMode)
             }
             .onDelete(perform: deleteItem) // Swipe-to-delete functionality
         }
         .navigationTitle("Items")
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
                 Button(isEditingMode ? "Done" : "Edit") {
@@ -57,16 +53,26 @@ struct ItemsView: View {
 
 struct ItemsListItemView: View {
     var item: Item
-    
+    @Binding var isEditingMode: Bool
     var body: some View {
-        HStack {
+        
+        let itemBody: some View = HStack {
             Text(item.name)
                 .font(.headline)
             Spacer()
             Text("\(item.amount)")
             Text(item.unit)
         }
-        .padding(.vertical, 8)
+            .padding(.vertical, 8)
+        
+        if isEditingMode {
+            NavigationLink(destination: ItemCreationView(item: item)){
+                itemBody
+            }
+        }
+        else {
+            itemBody
+        }
     }
 }
 
