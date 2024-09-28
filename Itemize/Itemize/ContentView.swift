@@ -61,6 +61,7 @@ struct ContentView: View {
         .sheet(isPresented: $isShowingScanner) {
               DocumentScannerView { scannedImages in
                   self.scannedImages = scannedImages
+                  appState.receiptScanRequest(image: scannedImages[0])
               }
           }
         .sheet(isPresented: $appState.showScannedItems) {
