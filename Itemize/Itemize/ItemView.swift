@@ -44,3 +44,36 @@ struct ItemView : View {
 #Preview {
     ItemView(item:Item(), editMode:.constant(false))
 }
+
+
+
+struct ItemEditView: View {
+    var item: Item
+    @Binding var editItem: Bool
+    @EnvironmentObject var appState: AppState
+    @State private var showDeleteAlert: Bool = false
+    
+    var body: some View {
+        HStack {
+            if editItem {
+                // When in edit mode, the item is clickable and navigates to the editing view
+                NavigationLink(destination: ItemCreationView(item: item)) {
+                    itemRow
+                }
+            } else {
+                itemRow // Non-clickable row when not in edit mode
+            }
+        }
+    }
+    
+    // Extracted row view for reuse
+    private var itemRow: some View {
+        HStack {
+            Text(item.name)
+                .font(.headline)
+            Spacer()
+            Text(String(item.amount))
+            Text(item.unit)
+        }
+    }
+}
