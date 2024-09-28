@@ -10,12 +10,13 @@ import SwiftUI
 struct ContentView: View {
     @EnvironmentObject var appState: AppState
     enum TabSelection  {
-        case recipies
+        case recipes
         case scan
         case items
     }
     
-    @State private var selectedTab: TabSelection = .recipies
+    @State private var selectedTab: TabSelection = .recipes
+    @State private var appState = AppState()
     
     
     var body: some View {
@@ -35,13 +36,13 @@ struct ContentView: View {
                 HStack(alignment:.bottom) {
                     Spacer()
                     Button() {
-                        selectedTab = .recipies
+                        selectedTab = .recipes
                     } label: {
                         VStack (spacing: 10) {
                             Image(systemName: "list.bullet.rectangle")
                             Text("Reipies")
                         }
-                    }.foregroundStyle(selectedTab == .recipies ? Color.blue : Color.primary)
+                    }.foregroundStyle(selectedTab == .recipes ? Color.blue : Color.primary)
                     
                     Button() {
                         selectedTab = .scan
