@@ -14,4 +14,5 @@ struct Item : Hashable {
     var amount : Double = 0
     var unit : String = ""
     var price : Double = 0
+    var acquired = false
 }
