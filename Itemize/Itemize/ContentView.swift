@@ -62,7 +62,7 @@ struct ContentView: View {
                     .padding()
                 List {
                     ForEach(appState.addedItems , id: \.id) { item in
-                        ItemsListItemView(item: item, editMode: .constant(false))
+                        ItemsListItemView(item: item)
                     }
                 }.frame(maxHeight: .infinity)
             }

@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 struct Item : Hashable {
     var id : String = UUID().uuidString
     var name : String = ""
