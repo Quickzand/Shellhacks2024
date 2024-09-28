@@ -22,8 +22,6 @@ struct ItemCreationView: View {
                     Text("Amount: \(item.amount)")
                 }
                 TextField("Unit", text: $item.unit)
-                TextField("Price", value: $item.price, format: .currency(code: "USD"))
-                    .keyboardType(.decimalPad)
             }
             
             Button(action: {
@@ -67,13 +65,7 @@ struct ItemCreationView: View {
             showingAlert = true
             return false
         }
-        
-        // Check if the price is greater than 0
-        guard item.price > 0 else {
-            alertMessage = "Price must be greater than 0."
-            showingAlert = true
-            return false
-        }
+      
         
         return true
     }
