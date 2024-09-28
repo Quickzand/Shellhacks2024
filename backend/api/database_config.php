@@ -10,5 +10,8 @@
         die("Connection failed: " . $connection->connect_error);
     }
 
-    echo "Connected Successfully";
+    function getDbConnection() {
+        global $connection;
+        return $connection;
+    }
 ?>

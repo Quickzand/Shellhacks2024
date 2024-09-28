@@ -18,25 +18,13 @@
     $connection = getDbConnection();
 
     if ($_SERVER["REQUEST_METHOD"] == "GET") {
-        $availableOnly = filter_input(INPUT_GET, "available_only");
-        $availableOnly = sanitize_input($availableOnly);
+        $recipe = filter_input(INPUT_GET, "recipe");
+        $recipe = sanitize_input($recipe);
 
-        $sql;
-        if ($availableOnly == "true") {
-            $sql = "SELECT r.RECIPE_NAME, r.ID FROM RECIPES r
-                    JOIN RECIPE_ITEMS ri ON r.ID = ri.ID
-                    JOIN ITEMS i ON ri.ITEM_ID = i.ID
-                    GROUP BY r.ID
-                    HAVING 
-                        COUNT(*) = SUM(
-                            CASE 
-                                WHEN i.AMOUNT >= ri.AMOUNT AND i.UNIT = ri.UNIT THEN 1
-                                ELSE 0
-                            END
-                        );";
-        } else {
-            $sql = "SELECT * FROM RECIPES";
-        }
+        $sql = "SELECT r.RECIPE_NAME, r.ID, i.ITEM_NAME, ri.AMOUNT, ri.UNIT FROM RECIPES r
+                JOIN  RECIPE_ITEMS ri ON r.ID = ri.RECIPE_ID
+                JOIN ITEMS i on ri.ITEM_ID = i.ID
+                WHERE r.RECIPE_NAME = '" . $recipe . "';";
 
         $result = $connection->query($sql);
 
@@ -48,7 +36,7 @@
 
         if ($result->num_rows > 0) {            
             while ($row = $result->fetch_assoc()) {
-                array_push($json, ["RecipeID" => $row["ID"], "RecipeName" => $row["RECIPE_NAME"]]);
+                array_push($json, ["itemID" => $row["ID"], "itemName" => $row["ITEM_NAME"], "amount" => $row["AMOUNT"], "unit" => $row["UNIT"]]);
             }
         }
 
