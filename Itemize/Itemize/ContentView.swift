@@ -87,7 +87,7 @@ struct ContentView: View {
                             Text("Reipies")
                         }
                     }.foregroundStyle(selectedTab == .recipes ? Color.blue : Color.primary)
-                    
+                    Spacer()
                     Button() {
                         if isSimulator() {
                             appState.testRequest()
@@ -104,7 +104,7 @@ struct ContentView: View {
                         }
                     }.foregroundStyle(Color.primary)
                     .padding(.horizontal, 10)
-                    
+                    Spacer()
                     Button() {
                         selectedTab = .items
                     } label: {
@@ -115,6 +115,7 @@ struct ContentView: View {
                     }.foregroundStyle(selectedTab == .items ? Color.blue : Color.primary)
                     Spacer()
                 }
+                .padding(.bottom, 15)
             }
         }
     }
@@ -122,4 +123,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
+        .environmentObject(AppState())
 }
