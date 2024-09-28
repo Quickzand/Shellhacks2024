@@ -11,6 +11,7 @@ struct ItemsView: View {
     @EnvironmentObject var appState: AppState
     @State private var isEditingMode: Bool = false
     @State private var selectedItem: Item? = nil // Track the selected item for editing
+    @State private var isAddingItem: Bool = false
     
     var body: some View {
         List {
@@ -32,14 +33,16 @@ struct ItemsView: View {
                 }
             }
             ToolbarItem(placement: .navigationBarTrailing) {
-                NavigationLink(destination: ItemCreationView()) {
+                Button(action: {
+                    isAddingItem.toggle() // Show sheet for adding a new item
+                }) {
                     Image(systemName: "plus")
                 }
             }
         }
         // If selectedItem is not nil, present the editing view for the selected item
-        .sheet(item: $selectedItem) { selectedItem in
-            ItemCreationView(item: selectedItem)
+        .sheet(isPresented: $isAddingItem) {
+            ItemCreationView()
         }
     }
     
@@ -84,38 +87,41 @@ struct ItemCreationView: View {
     let units = ["Teaspoon (tsp)", "Tablespoon (tbsp)", "Fluid Ounce (fl oz)", "Cup", "Pint", "Quart", "Ounce", "Pound (lb)"]
 
     var body: some View {
-        Form {
-            Section(header: Text("Item Details")) {
-                TextField("Item Name", text: $name)
-                Stepper(value: $amount, in: 0...1000) {
-                    Text("Amount: \(amount, specifier: "%.0f")")
+        NavigationStack{
+            Form {
+                Section(header: Text("Item Details")) {
+                    TextField("Item Name", text: $name)
+                    Stepper(value: $amount, in: 0...1000) {
+                        Text("Amount: \(amount, specifier: "%.0f")")
+                    }
+                    Picker("Unit", selection: $unit) {
+                        ForEach(units, id: \.self) { unit in
+                            Text(unit).tag(unit)
+                        }
+                    }
+                    .pickerStyle(MenuPickerStyle())
+                    .padding(.top, 4)
+                    TextField("Price", value: $price, format: .currency(code: "USD"))
+                        .keyboardType(.decimalPad)
                 }
-                Picker("Unit", selection: $unit) {
-                    ForEach(units, id: \.self) { unit in
-                        Text(unit).tag(unit)
+            }
+            .navigationTitle(item == nil ? "Log New Item" : "Edit Item") // Change title based on context
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarItems(
+                leading: Button("Cancel") {
+                    presentationMode.wrappedValue.dismiss() // Dismiss the view without saving
+                },
+                trailing: Button("Save") {
+                    if validateItem() {
+                        saveItem()
+                        presentationMode.wrappedValue.dismiss() // Dismiss after saving
                     }
                 }
-                .pickerStyle(MenuPickerStyle())
-                .padding(.top, 4)
-                TextField("Price", value: $price, format: .currency(code: "USD"))
-                    .keyboardType(.decimalPad)
+            )
+            .onAppear(perform: loadItemValues)
+            .alert(isPresented: $showingAlert) {
+                Alert(title: Text("Missing Information"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
             }
-        }
-        .navigationTitle(item == nil ? "Log New Item" : "Edit Item") // Change title based on context
-        .navigationBarItems(
-            leading: Button("Cancel") {
-                presentationMode.wrappedValue.dismiss() // Dismiss the view without saving
-            },
-            trailing: Button("Save") {
-                if validateItem() {
-                    saveItem()
-                    presentationMode.wrappedValue.dismiss() // Dismiss after saving
-                }
-            }
-        )
-        .onAppear(perform: loadItemValues)
-        .alert(isPresented: $showingAlert) {
-            Alert(title: Text("Missing Information"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
         }
     }
     
@@ -171,6 +177,7 @@ struct ItemCreationView: View {
 
         return true
     }
+        
 }
 
 
