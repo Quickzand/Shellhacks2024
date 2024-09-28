@@ -41,8 +41,7 @@ struct RecipesView: View {
                     }
                 }
                 .popover(isPresented: $showingAddRecipe) {
-                    AddRecipeView() // Show the AddRecipeView in the popover
-                        .environmentObject(appState) // Pass the AppState to the popover
+                    AddRecipeView()
                 }
             }
         
