@@ -11,7 +11,9 @@ struct ContentView: View {
     @EnvironmentObject var appState: AppState
     enum TabSelection  {
         case recipes
+        case groceries
         case items
+        case settings
     }
     
     @State private var selectedTab: TabSelection = .recipes
@@ -44,9 +46,15 @@ struct ContentView: View {
                 switch selectedTab {
                 case .recipes:
                     RecipesView()
+                case .groceries:
+                    GroceriesView()
                 case .items:
                     ItemsView()
+                case .settings:
+                    SettingsView()
+                    
                 }
+                
             }
                 
         }
@@ -62,7 +70,7 @@ struct ContentView: View {
                     .padding()
                 List {
                     ForEach(appState.addedItems , id: \.id) { item in
-                        ItemsListItemView(item: item, isEditingMode: .constant(false))
+                        ItemView(item: item, editMode: .constant(false))
                     }
                 }.frame(maxHeight: .infinity)
             }
@@ -83,11 +91,21 @@ struct ContentView: View {
                         selectedTab = .recipes
                     } label: {
                         VStack (spacing: 10) {
-                            Image(systemName: "list.bullet.rectangle")
+                            Image(systemName: "cooktop")
                             Text("Reipies")
                         }
                     }.foregroundStyle(selectedTab == .recipes ? Color.blue : Color.primary)
                     Spacer()
+                    Button() {
+                        selectedTab = .groceries
+                    } label: {
+                        VStack (spacing: 10) {
+                            Image(systemName: "list.bullet.rectangle.portrait")
+                            Text("Groceries")
+                        }
+                    }.foregroundStyle(selectedTab == .groceries ? Color.blue : Color.primary)
+                    Spacer()
+                    
                     Button() {
                         if isSimulator() {
                             appState.testRequest()
@@ -95,11 +113,13 @@ struct ContentView: View {
                             isShowingScanner = true
                         }
                     } label: {
-                        VStack (spacing: 10){
-                            Image(systemName: "barcode.viewfinder")
-                                .background(Circle().fill(Color.orange).frame(width:75 , height: 75))
-                                .foregroundStyle( Color.white)
-                                .font(.system(size: 40))
+                        VStack (spacing: 0){
+                            ZStack {
+                                Circle().fill(Color.orange).frame(width:75 , height: 75)
+                                Image(systemName: "barcode.viewfinder")
+                                    .foregroundStyle( Color.white)
+                                    .font(.system(size: 30))
+                            }
                             Text("Scan")
                         }
                     }.foregroundStyle(Color.primary)
@@ -114,8 +134,19 @@ struct ContentView: View {
                         }
                     }.foregroundStyle(selectedTab == .items ? Color.blue : Color.primary)
                     Spacer()
+                    Button() {
+                        selectedTab = .settings
+                    } label: {
+                        VStack (spacing: 10){
+                            Image(systemName: "gear")
+                            Text("Settings")
+                        }
+                    }.foregroundStyle(selectedTab == .settings ? Color.blue : Color.primary)
+                    Spacer()
                 }
-                .padding(.bottom, 15)
+                .padding(.bottom, 25)
+                .padding(.horizontal)
+                .font(.system(size: 12))
             }
         }
     }

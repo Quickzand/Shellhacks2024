@@ -12,5 +12,5 @@ struct Item : Hashable, Identifiable {
     var name : String = ""
     var amount : Double = 0
     var unit : String = ""
-    var price : Double = 0
+    var acquired = false
 }
