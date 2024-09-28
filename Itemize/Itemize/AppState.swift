@@ -76,7 +76,7 @@ class AppState : ObservableObject {
         isLoading = true
         print("Starting analysis of receipt...")
         if let imageData = image.pngData() {
-            chatGPTAnalyzeImage(with: imageData, apiKey: apiKey, prompt: "[NO PROSE] [OUTPUT ONLY JSON] Based off this receipt, generate JSON corresponding to different paremeters the items in the list. It should look like [{itemName: name, amount: amount, unit: unit, price: price}], if you do not know the data for sure, give your best estimate. If an item is not a grocery, ignore it. If you can simplify something, please do so. For example, dont name something boneless, skinless, chicken breast, just name is chicken breast. Dont say organic onions, just say onions. For example, if you have a bag of rice, say it is rice. IF there are two of the same item on a receipt, combine them. Do NOT return multiple of the same item. FOr units, never say packs of or bags of, give weights or volumes instead. If you need to, you can provide a unit as a count, and give an estimate of the count. So rather than a dozen eggs, put a 12 count. USE IMPERIAL AMERICAN UNITS. Additionally, here is a list of items, if the item is already in the list, include the item id in the output. For example, if you see chicken breast in the list with an id of 123, the ouput should look like {itemName: chicken breast, amount: 1, unit: kg, price: 10, id: 123}. Ensure units stay consistent as well. If something is listed multiple times, DONT REPEAT IT, rather, combine multiple entries into one. Here are the items: \(items)")
+            chatGPTAnalyzeImage(with: imageData, apiKey: apiKey, prompt: "[NO PROSE] [OUTPUT ONLY JSON] Based off this receipt, generate JSON corresponding to different paremeters the items in the list. It should look like [{itemName: name, amount: amount, unit: unit, price: price}], if you do not know the data for sure, give your best estimate. If an item is not a grocery, ignore it. If you can simplify something, please do so. For example, dont name something boneless, skinless, chicken breast, just name is chicken breast. Dont say organic onions, just say onions. For example, if you have a bag of rice, say it is rice. IF there are two of the same item on a receipt, combine them. DO NOT Say any brand names. Do NOT return multiple of the same item. FOr units, never say packs of or bags of, give weights or volumes instead. If you need to, you can provide a unit as a count, and give an estimate of the count. So rather than a dozen eggs, put a 12 count. USE IMPERIAL AMERICAN UNITS. Additionally, here is a list of items, if the item is already in the list, include the item id in the output. For example, if you see chicken breast in the list with an id of 123, the ouput should look like {itemName: chicken breast, amount: 1, unit: kg, price: 10, id: 123}. Ensure units stay consistent as well. If something is listed multiple times, DONT REPEAT IT, rather, combine multiple entries into one. Here are the items: \(items)")
             
         }
     }
@@ -89,6 +89,8 @@ class AppState : ObservableObject {
         [{ name: name, description: short, 2 sentence maximum description, ingredients: [String array of ingredients], steps: [String array of steps]}].
         Here are the items: \(items)
         """
+        
+        isLoading = true
         
         let url = URL(string: "https://api.openai.com/v1/chat/completions")!
         
@@ -114,17 +116,20 @@ class AppState : ObservableObject {
             request.httpBody = jsonData
         } catch {
             print("Error serializing JSON: \(error.localizedDescription)")
+            isLoading = false
             return
         }
         
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
                 print("Error: \(error.localizedDescription)")
+                self.isLoading = false
                 return
             }
             
             guard let data = data else {
                 print("No data received")
+                self.isLoading = false
                 return
             }
             
@@ -155,15 +160,17 @@ class AppState : ObservableObject {
                         // Update the recipes on the main thread
                         DispatchQueue.main.async {
                             self.recipes.append(newRecipe)
+                            self.isLoading = false
                         }
                     }
                     
                 }
             } catch {
                 print("Error parsing JSON: \(error.localizedDescription)")
+                self.isLoading = false
             }
         }
-
+        
         task.resume()
     }
     
@@ -249,16 +256,6 @@ class AppState : ObservableObject {
                                        let amount = item["amount"] as? Double,
                                        let unit = item["unit"] as? String,
                                        let price = item["price"] as? Double {
-                                        if let id = item["id"] as? String {
-//                                           Find the index with that id and add the new ammount
-                                            if let index = self.items.firstIndex(of: self.items.first(where: { $0.id == id })!) {
-                                                self.items[index].amount += amount
-                                                print("Updated item: \(self.items[index])")
-                                            }
-                                        } else {
-                                            self.items.append(Item(name: itemName, amount: amount, unit: unit))
-                                            print("Added item: \(self.items.last!)")
-                                        }
                                         self.addedItems.append(Item(name: itemName, amount: amount, unit: unit))
                                     }
                                 }

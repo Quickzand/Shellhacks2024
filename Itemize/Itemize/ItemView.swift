@@ -16,6 +16,7 @@ struct ItemView : View {
         HStack {
             Text(item.name)
                 .font(.headline)
+                .textCase(.uppercase)
             Spacer()
             Text(String(item.amount))
             Text(item.unit)
