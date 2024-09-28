@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
+    @EnvironmentObject var appState: AppState
     enum TabSelection  {
         case recipies
         case scan
@@ -18,18 +19,17 @@ struct ContentView: View {
     
     
     var body: some View {
-        VStack {
-            switch selectedTab {
+        NavigationView {
+                switch selectedTab {
                 case .recipies:
-                RecipesView()
-            case .scan:
-                ScanView()
-            case .items:
-                ItemsView()
-            }
-           
+                    RecipesView()
+                case .scan:
+                    ScanView()
+                case .items:
+                    ItemsView()
+                }
+                
         }
-        .padding()
         .toolbar {
             ToolbarItemGroup(placement: .bottomBar) {
                 HStack(alignment:.bottom) {
@@ -68,6 +68,7 @@ struct ContentView: View {
                 }
             }
         }
+        .environmentObject(AppState())
     }
 }
 
