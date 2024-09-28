@@ -62,7 +62,7 @@ class AppState : ObservableObject {
         isLoading = true
         print("Starting scan of receipt\(number).png")
         if let imageData = UIImage(named: "receipt\(number).png")?.pngData() {
-            chatGPTAnalyzeImage(with: imageData, apiKey: apiKey, prompt: "[NO PROSE] [OUTPUT ONLY JSON] Based off this receipt, generate JSON corresponding to different paremeters the items in the list. It should look like [{itemName: name, amount: amount, unit: unit, price: price}], if you do not know the data for sure, give your best estimate. If an item is not a grocery, ignore it. If you can simplify something, please do so. For example, dont name something boneless, skinless, chicken breast, just name is chicken breast. Dont say organic onions, just say onions. For example, if you have a bag of rice, say it is rice. IF there are two of the same item on a receipt, combine them. Do NOT return multiple of the same item. FOr units, never say packs of or bags of, give weights or volumes instead. If you need to, you can provide a unit as a count, and give an estimate of the count. So rather than a dozen eggs, put a 12 count. USE IMPERIAL AMERICAN UNITS. Additionally, here is a list of items, if the item is already in the list, include the item id in the output. For example, if you see chicken breast in the list with an id of 123, the ouput should look like {itemName: chicken breast, amount: 1, unit: kg, price: 10, id: 123}. Ensure units stay consistent as well. If something is listed multiple times, DONT REPEAT IT, rather, combine multiple entries into one. Here are the items: \(items)")
+            chatGPTAnalyzeImage(with: imageData, apiKey: apiKey, prompt: "[NO PROSE] [OUTPUT ONLY JSON] Based off this receipt, generate JSON corresponding to different paremeters the items in the list. It should look like [{itemName: name, amount: amount, unit: unit }], if you do not know the data for sure, give your best estimate. If an item is not a grocery, ignore it. If you can simplify something, please do so. For example, dont name something boneless, skinless, chicken breast, just name is chicken breast. Dont say organic onions, just say onions. For example, if you have a bag of rice, say it is rice. IF there are two of the same item on a receipt, combine them. Do NOT return multiple of the same item. FOr units, never say packs of or bags of, give weights or volumes instead. If you need to, you can provide a unit as a count, and give an estimate of the count. So rather than a dozen eggs, put a 12 count. USE IMPERIAL AMERICAN UNITS. Additionally, here is a list of items, if the item is already in the list, include the item id in the output. For example, if you see chicken breast in the list with an id of 123, the ouput should look like {itemName: chicken breast, amount: 1, unit: kg, price: 10, id: 123}. Ensure units stay consistent as well. If something is listed multiple times, DONT REPEAT IT, rather, combine multiple entries into one. Here are the items: \(items)")
             
         }
     }
@@ -72,7 +72,7 @@ class AppState : ObservableObject {
         isLoading = true
         print("Starting analysis of receipt...")
         if let imageData = image.pngData() {
-            chatGPTAnalyzeImage(with: imageData, apiKey: apiKey, prompt: "[NO PROSE] [OUTPUT ONLY JSON] Based off this receipt, generate JSON corresponding to different paremeters the items in the list. It should look like [{itemName: name, amount: amount, unit: unit, price: price}], if you do not know the data for sure, give your best estimate. If an item is not a grocery, ignore it. If you can simplify something, please do so. For example, dont name something boneless, skinless, chicken breast, just name is chicken breast. Dont say organic onions, just say onions. For example, if you have a bag of rice, say it is rice. IF there are two of the same item on a receipt, combine them. DO NOT Say any brand names. Do NOT return multiple of the same item. FOr units, never say packs of or bags of, give weights or volumes instead. If you need to, you can provide a unit as a count, and give an estimate of the count. So rather than a dozen eggs, put a 12 count. USE IMPERIAL AMERICAN UNITS. Additionally, here is a list of items, if the item is already in the list, include the item id in the output. For example, if you see chicken breast in the list with an id of 123, the ouput should look like {itemName: chicken breast, amount: 1, unit: kg, price: 10, id: 123}. Ensure units stay consistent as well. If something is listed multiple times, DONT REPEAT IT, rather, combine multiple entries into one. Here are the items: \(items)")
+            chatGPTAnalyzeImage(with: imageData, apiKey: apiKey, prompt: "[NO PROSE] [OUTPUT ONLY JSON] Based off this receipt, generate JSON corresponding to different paremeters the items in the list. It should look like [{itemName: name, amount: amount, unit: unit}], if you do not know the data for sure, give your best estimate. If an item is not a grocery, ignore it. If you can simplify something, please do so. For example, dont name something boneless, skinless, chicken breast, just name is chicken breast. Dont say organic onions, just say onions. For example, if you have a bag of rice, say it is rice. IF there are two of the same item on a receipt, combine them. DO NOT Say any brand names. Do NOT return multiple of the same item. FOr units, never say packs of or bags of, give weights or volumes instead. If you need to, you can provide a unit as a count, and give an estimate of the count. So rather than a dozen eggs, put a 12 count. USE IMPERIAL AMERICAN UNITS. Additionally, here is a list of items, if the item is already in the list, include the item id in the output. For example, if you see chicken breast in the list with an id of 123, the ouput should look like {itemName: chicken breast, amount: 1, unit: kg, price: 10, id: 123}. Ensure units stay consistent as well. If something is listed multiple times, DONT REPEAT IT, rather, combine multiple entries into one. Here are the items: \(items)")
             
         }
     }
@@ -82,7 +82,7 @@ class AppState : ObservableObject {
     func generateRecipiesRequest() {
         let prompt = """
         [NO PROSE] [OUTPUT ONLY JSON] Based off the items provided, generate JSON corresponding to a single recipe for a meal made with them. It should look like:
-        [{ name: name, description: short, 2 sentence maximum description, ingredients: [String array of ingredients], steps: [String array of steps]}].
+        [{ name: name, description: short, 2 sentence maximum description, ingredients: [Item array of ingredients] (formatted like {itemName: name, recipeAmount: amount, unit: unit} and units should match what the item already uses), steps: [String array of steps]}].
         Here are the items: \(items)
         """
         
@@ -135,20 +135,28 @@ class AppState : ObservableObject {
                    let choices = json["choices"] as? [[String: Any]],
                    let message = choices.first?["message"] as? [String: Any],
                    var content = message["content"] as? String {
-                    // Remove the "```json" and "```" from the content
                     content = content.replacingOccurrences(of: "```json", with: "")
                     content = content.replacingOccurrences(of: "```", with: "")
                     content = content.trimmingCharacters(in: .whitespacesAndNewlines)
                     
-                    // Process the response directly
                     if let jsonData = content.data(using: .utf8),
                        let recipeArray = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [[String: Any]],
                        let recipeDict = recipeArray.first {
                         
                         let name = recipeDict["name"] as? String ?? "Unnamed Recipe"
                         let description = recipeDict["description"] as? String ?? ""
-                        let ingredients = recipeDict["ingredients"] as? [String] ?? []
+                        let ingredientDicts = recipeDict["ingredients"] as? [[String: Any]] ?? []
                         let steps = recipeDict["steps"] as? [String] ?? []
+                        
+                        // Decode ingredients
+                        let ingredients: [Item] = ingredientDicts.compactMap { dict in
+                            if let itemName = dict["itemName"] as? String,
+                                  let amount = dict["recipeAmount"] as? Double,
+                                  let unit = dict["unit"] as? String {
+                                      return Item(name: itemName, unit: unit, recipeAmount: amount)
+                                  }
+                            return Item()
+                        }
                         
                         // Create the Recipe object
                         let newRecipe = Recipe(id: UUID().uuidString, name: name, description: description, notes: "", ingredients: ingredients, steps: steps)
@@ -169,6 +177,7 @@ class AppState : ObservableObject {
         
         task.resume()
     }
+
     
     
     func chatGPTAnalyzeImage(with image: Data, apiKey: String, prompt: String) {
@@ -250,8 +259,7 @@ class AppState : ObservableObject {
                                 for item in itemsArray {
                                     if let itemName = item["itemName"] as? String,
                                        let amount = item["amount"] as? Double,
-                                       let unit = item["unit"] as? String,
-                                       let price = item["price"] as? Double {
+                                       let unit = item["unit"] as? String {
                                         self.addedItems.append(Item(name: itemName, amount: amount, unit: unit))
                                     }
                                 }
@@ -275,6 +283,39 @@ class AppState : ObservableObject {
     }
     
     
+    func completeRecipe(recipe: Recipe) {
+        // Loop through each ingredient in the recipe
+        for ingredient in recipe.ingredients {
+            // Check if the item exists in the items list
+            if let itemIndex = items.firstIndex(where: { $0.name == ingredient.name }) {
+                var item = items[itemIndex]
+                
+                // Ensure the units match before subtracting
+                if item.unit == ingredient.unit {
+                    // Subtract the recipe amount from the item's current amount
+                    item.amount -= ingredient.recipeAmount
+                    
+                    // If the item's amount is now zero or less, remove it from the list
+                    if item.amount <= 0 {
+                        items.remove(at: itemIndex)
+                    } else {
+                        // Otherwise, update the item in the list with the new amount
+                        items[itemIndex] = item
+                    }
+                } else {
+                    print("Units don't match for \(item.name) and \(ingredient.name)")
+                }
+            } else {
+                print("Item \(ingredient.name) not found in the list.")
+            }
+        }
+    }
+
+    
+    
 
 }
+
+
+
 

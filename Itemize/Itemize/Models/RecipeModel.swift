@@ -12,6 +12,8 @@ struct Recipe: Hashable {
     var name: String
     var description: String
     var notes: String
-    var ingredients: [String]
+    var ingredients: [Item]
     var steps: [String]
 }
+
+
