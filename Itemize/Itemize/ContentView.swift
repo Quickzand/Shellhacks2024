@@ -147,7 +147,7 @@ struct ContentView: View {
                     } label: {
                         VStack (spacing: 10) {
                             Image(systemName: "cooktop")
-                            Text("Reipies")
+                            Text("Recipes")
                         }
                     }.foregroundStyle(selectedTab == .recipes ? Color.blue : Color.primary)
                     Spacer()
@@ -214,6 +214,8 @@ struct ContentView: View {
 struct AddedItemView : View {
     @State var item : Item
     @EnvironmentObject var appState : AppState
+    
+    @State var tempUnit : Units = .count
 
     static let formatter = NumberFormatter()
 
@@ -241,12 +243,23 @@ struct AddedItemView : View {
                 })
             }
             .font(.subheadline)
-            
             HStack {
-                TextField("Unit:", text: $item.unit)
+                Text("Unit:") // Label for the picker
+                Picker("Select Unit", selection: $tempUnit) {
+                    ForEach(Units.allCases, id: \.self) { unit in
+                        Text(unit.rawValue).tag(unit)
+                    }
+                }
+                .pickerStyle(MenuPickerStyle()) // You can change this to any picker style you prefer
+                .onChange(of:tempUnit) {
+                    item.unit = tempUnit.rawValue
+                }
+                .onAppear {
+                    tempUnit = Units.from(caseName: item.unit) ?? .count
+                }
             }
             .font(.subheadline)
-            
+            .padding(.top, 4)
             
         }.onChange(of: item.amount) {
             var index = self.appState.addedItems.firstIndex(where: { $0.id == item.id }) ?? 0
