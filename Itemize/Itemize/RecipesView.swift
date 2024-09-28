@@ -32,14 +32,23 @@ struct RecipesView: View {
                 }
                 .navigationTitle("Recipes")
                 .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button(action: {
-                            showingAddRecipe.toggle() // Toggle the popover
-                        }) {
-                            Image(systemName: "plus") // Plus icon
-                        }
-                    }
-                }
+                                ToolbarItem(placement: .navigationBarTrailing) {
+                                    Menu {
+                                        Button(action: {
+                                            showingAddRecipe.toggle()
+                                        }) {
+                                            Label("Add Recipe", systemImage: "plus")
+                                        }
+                                        Button(action: {
+                                            appState.generateRecipiesRequest()
+                                        }) {
+                                            Label("Generate Recipe", systemImage: "sparkles")
+                                        }
+                                    } label: {
+                                        Image(systemName: "plus") // Plus icon
+                                    }
+                                }
+                            }
                 .popover(isPresented: $showingAddRecipe) {
                     AddRecipeView()
                 }
