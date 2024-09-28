@@ -11,12 +11,23 @@ struct ItemsView: View {
     @EnvironmentObject var appState: AppState
     @State private var isEditingMode: Bool = false
     @State private var selectedItem: Item? = nil // Track the selected item for editing
-    @State private var isAddingItem: Bool = false
+    @State private var isPresentingSheet: Bool = false // Controls when to show the sheet for editing or adding items
     
     var body: some View {
         List {
             ForEach(appState.items, id: \.id) { item in
-                ItemsListItemView(item: item, isEditingMode: $isEditingMode)
+                HStack {
+                    Text(item.name)
+                        .font(.headline)
+                    Spacer()
+                    Text("\(item.amount)")
+                    Text(item.unit)
+                }
+                .contentShape(Rectangle()) // Makes the entire row tappable
+                .onTapGesture {
+                    selectedItem = item
+                    isPresentingSheet = true // Show sheet for editing the selected item
+                }
             }
             .onDelete(perform: deleteItem) // Swipe-to-delete functionality
         }
@@ -30,15 +41,17 @@ struct ItemsView: View {
             }
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: {
-                    isAddingItem.toggle() // Show sheet for adding a new item
+                    selectedItem = nil // Ensure no item is selected for creation
+                    isPresentingSheet = true // Show sheet for adding a new item
                 }) {
                     Image(systemName: "plus")
                 }
             }
         }
-        // If selectedItem is not nil, present the editing view for the selected item
-        .sheet(isPresented: $isAddingItem) {
-            ItemCreationView()
+        // Show the sheet for both adding and editing items
+        .sheet(isPresented: $isPresentingSheet) {
+            ItemCreationView(item: selectedItem) // Pass `selectedItem` if editing, nil if creating
+                .environmentObject(appState)
         }
     }
     
