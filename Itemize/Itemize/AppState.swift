@@ -258,10 +258,10 @@ class AppState : ObservableObject {
                                                 print("Updated item: \(self.items[index])")
                                             }
                                         } else {
-                                            self.items.append(Item(name: itemName, amount: amount, unit: unit, price: price))
+                                            self.items.append(Item(name: itemName, amount: amount, unit: unit))
                                             print("Added item: \(self.items.last!)")
                                         }
-                                        self.addedItems.append(Item(name: itemName, amount: amount, unit: unit, price: price))
+                                        self.addedItems.append(Item(name: itemName, amount: amount, unit: unit))
                                     }
                                 }
                                 self.isLoading = false
