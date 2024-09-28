@@ -7,9 +7,11 @@
 
 import Foundation
 
-struct Recipe: Identifiable {
-    var id: String
+struct Recipe: Hashable {
+    var id : String = UUID().uuidString
     var name: String
     var description: String
     var details: String
+    var ingredients: [String]
+    var steps: [String]
 }
