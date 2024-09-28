@@ -1,5 +1,5 @@
 <?php
-    include "database_config.php";
+    include "../database_config.php";
 
     header('Content-Type: application/json');
 
@@ -24,7 +24,7 @@
         $sql = "SELECT r.RECIPE_NAME, r.ID, i.ITEM_NAME, ri.AMOUNT, ri.UNIT FROM RECIPES r
                 JOIN  RECIPE_ITEMS ri ON r.ID = ri.RECIPE_ID
                 JOIN ITEMS i on ri.ITEM_ID = i.ID
-                WHERE r.RECIPE_NAME = '" . $recipe . "';";
+                WHERE r.RECIPE_NAME = '{$recipe}';";
 
         $result = $connection->query($sql);
 
