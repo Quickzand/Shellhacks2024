@@ -16,13 +16,12 @@ struct ContentView: View {
     }
     
     @State private var selectedTab: TabSelection = .recipes
-    @State private var appState = AppState()
     
     
     var body: some View {
         NavigationView {
                 switch selectedTab {
-                case .recipies:
+                case .recipes:
                     RecipesView()
                 case .scan:
                     ScanView()
