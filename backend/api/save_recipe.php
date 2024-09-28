@@ -19,12 +19,11 @@
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $json = file_get_contents("php://input");
-        // $json = sanitize_input($json);
         $json = json_decode($json);
         
         $ingredients = $json->ingredients;
 
-        $recipe = $json->recipe;
+        $recipe = sanitize_input($json->recipe);
 
         $sql = "INSERT INTO RECIPES (RECIPE_NAME) VALUES ('{$recipe}');";
 
@@ -50,7 +49,10 @@
             }
 
             if ($count == 0) {
-                $sql = "INSERT INTO ITEMS (ITEM_NAME, AMOUNT, UNIT) VALUES ('{$ingredient->name}', 0, {$ingredient->unit})";
+                $ingredientName = sanitize_input($ingredient->name);
+                $ingredientUnit = sanitize_input($ingredient->unit);
+
+                $sql = "INSERT INTO ITEMS (ITEM_NAME, AMOUNT, UNIT) VALUES ('{$ingredientName}', 0, {$ingredientUnit})";
 
                 $result = $connection->query($sql);
 
@@ -58,9 +60,13 @@
                     send_response(500, ["Message" => "Server Error"]);
                 }
             }
+
+            $ingredientName = sanitize_input($ingredient->name);
+            $ingredientAmount = sanitize_input($ingredient->amount);
+            $ingredientUnit = sanitize_input($ingredient->unit);
             
             $sql = "INSERT INTO RECIPE_ITEMS (RECIPE_ID, ITEM_ID, AMOUNT, UNIT) 
-                VALUES ((SELECT ID FROM RECIPES WHERE RECIPE_NAME = '{$recipe}'), (SELECT ID FROM ITEMS WHERE ITEM_NAME = '{$ingredient->name}'), {$ingredient->amount}, {$ingredient->unit});";
+                VALUES ((SELECT ID FROM RECIPES WHERE RECIPE_NAME = '{$recipe}'), (SELECT ID FROM ITEMS WHERE ITEM_NAME = '{$ingredientName}'), {$ingredientAmount}, {$ingredientUnit});";
                 
 
             $result = $connection->query($sql);
