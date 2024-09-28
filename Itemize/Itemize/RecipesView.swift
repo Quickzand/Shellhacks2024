@@ -122,12 +122,12 @@ struct RecipeDetailView: View {
         .navigationTitle("Recipe Details")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        NavigationLink(destination: EditRecipeView(recipeID: recipe.id)) {
-                            Text("Edit")
-                        }
-                    }
+            ToolbarItem(placement: .navigationBarTrailing) {
+                NavigationLink(destination: EditRecipeView(recipeID: recipe.id)) {
+                    Text("Edit")
                 }
+            }
+        }
     }
 }
 
@@ -177,6 +177,7 @@ struct AddRecipeView: View {
                 }
             }
             .navigationTitle("Add Recipe")
+            .navigationBarTitleDisplayMode(.inline)
             .navigationBarItems(leading: Button("Cancel"){
                 clearFields()
                 presentationMode.wrappedValue.dismiss()

@@ -46,10 +46,6 @@ class AppState : ObservableObject {
         }
     }
 
-
-    
-
-    
     func deleteItem(id : String) {
         let index = items.firstIndex(of: items.first(where: { $0.id == id })!)
         items.remove(at: index!)
