@@ -57,7 +57,7 @@ struct ItemCreationView: View {
     @State private var amount: Double = 0
     @State private var unit: String = ""
     
-    let units = ["Teaspoon (tsp)", "Tablespoon (tbsp)", "Fluid Ounce (fl oz)", "Cup", "Pint", "Quart", "Ounce", "Pound (lb)"]
+    let units = ["Count", "Teaspoon (tsp)", "Tablespoon (tbsp)", "Fluid Ounce (fl oz)", "Cup", "Pint", "Quart", "Ounce", "Pound (lb)"]
     
     var body: some View {
         Form {
