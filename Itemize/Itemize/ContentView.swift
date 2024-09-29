@@ -71,7 +71,7 @@ struct ContentView: View {
                   appState.receiptScanRequest(image: scannedImages[0])
               }
           }
-        .sheet(isPresented: $appState.showScannedItems) {
+        .sheet(isPresented: $appState.shouldShowSheet) {
             VStack {
                 Text("Here's what was added from your scan:")
                     .font(.headline)
@@ -89,13 +89,10 @@ struct ContentView: View {
                 .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
 
                 Button {
-                    if currentNewItemIndex < appState.addedItems.count - 1 {
                         // Go to the next page
                         withAnimation {
-                            print(currentNewItemIndex)
-                            print(appState.addedItems[currentNewItemIndex])
                             
-                            if (currentNewItemIndex == appState.addedItems.count - 2) {
+                            if (currentNewItemIndex >= (appState.addedItems.count - 1 )) {
 //                                Go through each index of added items
                                 for item in appState.addedItems {
                                     if self.appState.items.contains(where: { $0.id == item.id }) {
@@ -103,17 +100,25 @@ struct ContentView: View {
                                             self.appState.items[index].amount += item.amount
                                             print("Updated item: \(self.appState.items[index])")
                                         }
-                                    } else {
+                                    }
+                                    else if self.appState.items.contains(where: {$0.name == item.name}) {
+                                        if let index = self.appState.items.firstIndex(of: self.appState.items.first(where: { $0.name == item.name })!) {
+                                            self.appState.items[index].amount += item.amount
+                                            print("Updated item: \(self.appState.items[index])")
+                                        }
+                                    }
+                                else {
                                         self.appState.items.append(Item(name: item.name, amount: item.amount, unit: item.unit))
                                         print("Added item: \(self.appState.items.last!)")
                                     }
                                 }
+                                
                                 appState.showScannedItems = false
+                                currentNewItemIndex = 0
                             }
                             else {
                                 currentNewItemIndex += 1
                             }
-                               }
                     }
                 }
                 label: {
@@ -135,6 +140,27 @@ struct ContentView: View {
                     }
                 }
             }
+            .background(
+                        GeometryReader { geometry in
+                            let columns = Int(geometry.size.width / 50)
+                            let rows = Int(geometry.size.height / 50)
+                            
+                            VStack {
+                                ForEach(0..<rows, id: \.self) { row in
+                                    HStack {
+                                        ForEach(0..<columns, id: \.self) { column in
+                                            Text(currentNewItemIndex < appState.addedItems.count ?  appState.addedItems[currentNewItemIndex].emoji : "")
+                                                .font(.system(size: 30))
+                                        }
+                                    }
+                                }
+                            }
+//                            pick a random rotation
+                            .rotationEffect(Angle(degrees: Double.random(in: 0...360) ))
+                            .scaleEffect(2.5)
+                        }
+                        .opacity(0.1) // Adjust the opacity to make the emoji subtle
+                    )
         }
 
 
@@ -147,7 +173,7 @@ struct ContentView: View {
                     } label: {
                         VStack (spacing: 10) {
                             Image(systemName: "cooktop")
-                            Text("Reipies")
+                            Text("Recipes")
                         }
                     }.foregroundStyle(selectedTab == .recipes ? Color.blue : Color.primary)
                     Spacer()
@@ -155,7 +181,8 @@ struct ContentView: View {
                         selectedTab = .groceries
                     } label: {
                         VStack (spacing: 10) {
-                            Image(systemName: "list.bullet.rectangle.portrait")
+                            Image(systemName: "cart.badge.plus")
+                   
                             Text("Groceries")
                         }
                     }.foregroundStyle(selectedTab == .groceries ? Color.blue : Color.primary)
@@ -174,20 +201,22 @@ struct ContentView: View {
                         VStack (spacing: 0){
                             ZStack {
                                 Circle().fill(Color.orange).frame(width:75 , height: 75)
+                                    .shadow(color: .gray, radius: 1, x: 0, y: 4)
                                 Image(systemName: "barcode.viewfinder")
                                     .foregroundStyle( Color.white)
                                     .font(.system(size: 30))
                             }
-                            Text("Scan")
+//                            Text("Scan")
                         }
                     }.foregroundStyle(Color.primary)
                     .padding(.horizontal, 10)
+                    .disabled(appState.isLoading)
                     Spacer()
                     Button() {
                         selectedTab = .items
                     } label: {
                         VStack (spacing: 10){
-                            Image(systemName: "cart.badge.plus")
+                            Image(systemName: "list.bullet.rectangle.portrait")
                             Text("Items")
                         }
                     }.foregroundStyle(selectedTab == .items ? Color.blue : Color.primary)

@@ -25,6 +25,11 @@ struct RecipesView: View {
             VStack{
                 SearchBar(text: $searchString)
                 
+                if(appState.recipes.isEmpty) {
+                    Text("No Recipies Yet! Scan some receipts or add items to get srated.")
+                        .padding()
+                        .foregroundStyle(.gray)
+                }
                 List {
                     ForEach(filteredRecipes, id: \.id) { recipe in
                         RecipeListItemView(recipe: recipe)
