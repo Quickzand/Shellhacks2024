@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import Combine
 
-let apiKey = "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"
+let apiKey = ""
 
 
 class AppState : ObservableObject {
