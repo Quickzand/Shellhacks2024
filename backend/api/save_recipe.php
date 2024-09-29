@@ -24,8 +24,11 @@
         $ingredients = $json->ingredients;
 
         $recipe = sanitize_input($json->recipe);
+        $description = sanitize_input($json->description);
+        $notes = sanitize_input($json->notes);
+        $steps = sanitize_input($json->steps);
 
-        $sql = "INSERT INTO RECIPES (RECIPE_NAME) VALUES ('{$recipe}');";
+        $sql = "INSERT INTO RECIPES (RECIPE_NAME, RECIPE_DESCRIPTION, RECIPE_NOTES, RECIPE_STEPS) VALUES ('{$recipe}', '{$description}', '{$notes}', '{$steps}');";
 
         $result = $connection->query($sql);
         
