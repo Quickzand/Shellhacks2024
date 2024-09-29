@@ -70,7 +70,9 @@ class AppState : ObservableObject {
         isLoading = true
         print("Starting scan of receipt\(number).png")
         if let imageData = UIImage(named: "receipt\(number).png")?.pngData() {
+
             chatGPTAnalyzeImage(with: imageData, apiKey: apiKey, prompt:"[NO PROSE] [OUTPUT ONLY JSON] Based off this receipt, generate JSON corresponding to different paremeters the items in the list. It should look like [{itemName: name, amount: amount, unit: unit, emoji: closest corresponding emoji}], if you do not know the data for sure, give your best estimate. If an item is not a grocery, ignore it. If you can simplify something, please do so. For example, dont name something boneless, skinless, chicken breast, just name is chicken breast. Dont say organic onions, just say onions. For example, if you have a bag of rice, say it is rice. IF there are two of the same item on a receipt, combine them. DO NOT Say any brand names. Do NOT return multiple of the same item. FOr units, never say packs of or bags of, give weights or volumes instead. If you need to, you can provide a unit as a count, and give an estimate of the count. So rather than a dozen eggs, put a 12 count. USE IMPERIAL AMERICAN UNITS. Additionally, here is a list of items, if the item is already in the list, include the item id in the output. For example, if you see chicken breast in the list with an id of 123, the ouput should look like {itemName: chicken breast, amount: 1, unit: kg, price: 10, id: 123, emoji: 🍗}. Ensure units stay consistent as well. MAKE SURE TO INCLUDE EMOJI. If something is listed multiple times, DONT REPEAT IT, rather, combine multiple entries into one. Here are the items: \(items)")
+
             
         }
     }
@@ -80,6 +82,7 @@ class AppState : ObservableObject {
         isLoading = true
         print("Starting analysis of receipt...")
         if let imageData = image.pngData() {
+
             chatGPTAnalyzeImage(with: imageData, apiKey: apiKey, prompt: "[NO PROSE] [OUTPUT ONLY JSON] Based off this receipt, generate JSON corresponding to different paremeters the items in the list. It should look like [{itemName: name, amount: amount, unit: unit, emoji: closest corresponding emoji}], if you do not know the data for sure, give your best estimate. If an item is not a grocery, ignore it. If you can simplify something, please do so. For example, dont name something boneless, skinless, chicken breast, just name is chicken breast. Dont say organic onions, just say onions. For example, if you have a bag of rice, say it is rice. IF there are two of the same item on a receipt, combine them. DO NOT Say any brand names. Do NOT return multiple of the same item. FOr units, never say packs of or bags of, give weights or volumes instead. If you need to, you can provide a unit as a count, and give an estimate of the count. So rather than a dozen eggs, put a 12 count. USE IMPERIAL AMERICAN UNITS. Additionally, here is a list of items, if the item is already in the list, include the item id in the output. For example, if you see chicken breast in the list with an id of 123, the ouput should look like {itemName: chicken breast, amount: 1, unit: kg, price: 10, id: 123, emoji: 🍗}. Ensure units stay consistent as well. MAKE SURE TO INCLUDE EMOJI. If something is listed multiple times, DONT REPEAT IT, rather, combine multiple entries into one. Here are the items: \(items)")
             
         }
