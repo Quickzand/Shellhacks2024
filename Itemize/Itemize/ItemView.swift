@@ -73,7 +73,7 @@ struct ItemEditView: View {
             Text(item.name)
                 .font(.headline)
             Spacer()
-            Text(String(item.amount))
+            Text(String(format: "%.2f", item.amount))
             Text(item.unit)
         }
     }
