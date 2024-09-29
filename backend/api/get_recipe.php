@@ -18,13 +18,13 @@
     $connection = getDbConnection();
 
     if ($_SERVER["REQUEST_METHOD"] == "GET") {
-        $recipe = filter_input(INPUT_GET, "recipe");
-        $recipe = sanitize_input($recipe);
+        $json = file_get_contents("php://input");
+        $json = json_decode($json);
 
-        $sql = "SELECT r.RECIPE_NAME, r.ID, i.ITEM_NAME, ri.AMOUNT, ri.UNIT FROM RECIPES r
-                JOIN  RECIPE_ITEMS ri ON r.ID = ri.RECIPE_ID
-                JOIN ITEMS i on ri.ITEM_ID = i.ID
-                WHERE r.RECIPE_NAME = '{$recipe}';";
+        $token = sanitize_input($json->token);
+        $recipe = sanitize_input($json->recipe);
+
+        $sql = "CALL get_recipe({$token}, {$recipe});";
 
         $result = $connection->query($sql);
 
@@ -34,9 +34,15 @@
 
         $json = [];
 
+        $row = $result->fetch_assoc();
+
+        $row = $result->fetch_assoc();
+        array_push($json, ["Name" => $row["RECIPE_NAME"], "Description" => $row["RECIPE_DESCRIPTION"], "Notes" => $row["RECIPE_NOTES"], "Steps" => $row["RECIPE_STEPS"]]);
+
+
         if ($result->num_rows > 0) {            
             while ($row = $result->fetch_assoc()) {
-                array_push($json, ["itemID" => $row["ID"], "itemName" => $row["ITEM_NAME"], "amount" => $row["AMOUNT"], "unit" => $row["UNIT"]]);
+                array_push($json, ["Name" => $row["ITEM_NAME"], "Amount" => $row["AMOUNT"], "Unit" => $row["UNIT"], "Steps" => $row["RECIPE_STEPS"]]);
             }
         }
 

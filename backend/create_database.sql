@@ -148,7 +148,7 @@ END //
 DELIMITER ;
 
 DELIMITER //
-CREATE PROCEDURE get_all_recipes(IN input_token CHAR(255))
+CREATE PROCEDURE get_all_recipes(IN input_token CHAR(255), IN available_only INT)
 BEGIN
     DECLARE isValid INT;
     DECLARE userID INT;
@@ -165,7 +165,21 @@ BEGIN
         INSERT INTO RESPONSE VALUES (200);
         SELECT * FROM RESPONSE;
 
-        SELECT * FROM RECIPES WHERE USER_ID = userID;
+        IF available_only = 0 THEN
+            SELECT ID FROM RECIPES WHERE USER_ID = userID;
+        ELSE
+            SELECT r.ID FROM RECIPES r
+            JOIN RECIPE_ITEMS ri ON r.ID = ri.ID
+            JOIN ITEMS i ON ri.ITEM_ID = i.ID
+            GROUP BY r.ID
+            HAVING 
+                COUNT(*) = SUM(
+                    CASE 
+                        WHEN i.AMOUNT >= ri.AMOUNT AND i.UNIT = ri.UNIT THEN 1
+                        ELSE 0
+                    END
+                );
+        END
     ELSE
         INSERT INTO RESPONSE VALUES (400);
         SELECT * FROM RESPONSE;
@@ -184,10 +198,6 @@ BEGIN
     DECLARE recipeDescription TEXT;
     DECLARE recipeNotes TEXT;
     DECLARE recipeSteps TEXT;
-
-    DECLARE done INT DEFAULT FALSE;
-    DECLARE ingredientCursor CURSOR FOR SELECT r.ITEM_ID, ri.ITEM_NAME, ri.AMOUNT, ri.UNIT FROM RECIPES r JOIN RECIPE_ITEMS ri ON r.ID = ri.RECIPE_ID WHERE USER_ID = userID;
-    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
 
     CREATE TEMPORARY TABLE RESPONSE (
         RESPONSE_STATUS INT
