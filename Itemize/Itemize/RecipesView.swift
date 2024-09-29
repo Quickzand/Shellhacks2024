@@ -169,6 +169,8 @@ struct AddRecipeView: View {
     @State private var newIngredient: Item = Item() // For inputting a new ingredient
     @State private var newStep: String = "" // For inputting a new step
     @State private var showErrorAlert = false // State to control error alert
+    @State private var selectedIngredient: Item? = nil // Selected ingredient from the picker
+    @State private var selectedAmount: String = "" // Selected ingredient amount input
     @Environment(\.presentationMode) var presentationMode // To dismiss the popover
 
     var body: some View {
@@ -180,32 +182,45 @@ struct AddRecipeView: View {
                     TextField("Notes", text: $notes)
                 }
 
+                // Ingredients Section with Picker, Amount, Unit, and Plus Button
                 Section(header: Text("Ingredients")) {
-                    ForEach(ingredients, id: \.self) { ingredient in
-                        Text("• \(ingredient.name)")
-                    }
-                    .onDelete(perform: {
-                        ingredients.remove(atOffsets: $0)
-                    })
                     HStack {
-                        HStack() {
-                            Picker("Ingredient:", selection: $newIngredient) {
-                                ForEach(appState.items) { item in
-                                    Text("\(item.name)")
-                                        .tag(item)
-                                }
+                        // Ingredient Picker in the first column
+                        Picker("Ingredient", selection: $selectedIngredient) {
+                            ForEach(appState.items, id: \.self) { ingredient in
+                                Text(ingredient.name).tag(Optional(ingredient))
                             }
-                            .pickerStyle(.menu)
                         }
-                        Spacer()
-                        Button(action: addIngredient) {
-                            HStack {
-                                Image(systemName: "plus")
-                                Text("Add")
-                            }
+                        .pickerStyle(MenuPickerStyle())
+                        .frame(maxWidth: .infinity) // Make it flexible to adjust based on space
+                        .labelsHidden()
+
+                        // Amount TextField in the second column
+                        TextField("Amount", text: $selectedAmount)
+                            .keyboardType(.decimalPad)
+                            .frame(maxWidth: .infinity)
+
+                        // Unit in the third column
+                        if let ingredient = selectedIngredient {
+                            Text(ingredient.unit)
+                                .frame(maxWidth: .infinity, alignment: .trailing)
                         }
 
+                        // Compact Plus Button to add the ingredient
+                        Button(action: addIngredient) {
+                            Image(systemName: "plus")
+                        }
+                        .buttonStyle(BorderlessButtonStyle()) // Make the button smaller and less intrusive
+                        .padding(.leading, 8)
                     }
+
+                    // List showing current ingredients
+                    ForEach(ingredients, id: \.self) { ingredient in
+                        Text("\(ingredient.name): \(ingredient.amount, specifier: "%.2f") \(ingredient.unit)")
+                    }
+                    .onDelete(perform: { indexSet in
+                        ingredients.remove(atOffsets: indexSet)
+                    })
                 }
 
                 Section(header: Text("Steps")) {
@@ -222,10 +237,10 @@ struct AddRecipeView: View {
             }
             .navigationTitle("Add Recipe")
             .navigationBarTitleDisplayMode(.inline)
-            .navigationBarItems(leading: Button("Cancel"){
+            .navigationBarItems(leading: Button("Cancel") {
                 clearFields()
                 presentationMode.wrappedValue.dismiss()
-            },trailing: Button("Done") {
+            }, trailing: Button("Done") {
                 if validateFields() {
                     addRecipe() // Add the recipe when Done is pressed
                     presentationMode.wrappedValue.dismiss() // Dismiss the popover
@@ -240,35 +255,42 @@ struct AddRecipeView: View {
                     dismissButton: .default(Text("OK"))
                 )
             }
-            .onAppear {
-                newIngredient = appState.items.first!
-            }
         }
     }
-    
+
+    // Function to check if fields are valid
     private func validateFields() -> Bool {
         return !name.isEmpty && !description.isEmpty && !notes.isEmpty && !ingredients.isEmpty && !steps.isEmpty
     }
-    
+
+    // Function to add a recipe to the app state
     private func addRecipe() {
         let newRecipe = Recipe(id: UUID().uuidString, name: name, description: description, notes: notes, ingredients: ingredients, steps: steps)
         appState.recipes.append(newRecipe) // Add the new recipe to the app state
         clearFields() // Clear fields after adding
     }
-    
+
+    // Function to add an ingredient to the list
     private func addIngredient() {
-        if(!newIngredient.name.isEmpty) {
+        if let ingredient = selectedIngredient, let amount = Double(selectedAmount), !selectedAmount.isEmpty {
+            var newIngredient = ingredient
+            newIngredient.amount = amount
             ingredients.append(newIngredient)
+            // Reset after adding
+            selectedIngredient = nil
+            selectedAmount = ""
         }
     }
 
+    // Function to add a step to the list
     private func addStep() {
         if !newStep.isEmpty {
             steps.append(newStep.trimmingCharacters(in: .whitespaces))
             newStep = "" // Clear the input field
         }
     }
-    
+
+    // Function to clear all fields
     private func clearFields() {
         name = ""
         description = ""
@@ -277,8 +299,11 @@ struct AddRecipeView: View {
         steps = []
         newIngredient = Item()
         newStep = ""
+        selectedIngredient = nil
+        selectedAmount = ""
     }
 }
+
 
 struct EditRecipeView: View {
     @EnvironmentObject var appState: AppState

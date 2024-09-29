@@ -93,7 +93,7 @@ class AppState : ObservableObject {
     func generateRecipiesRequest() {
         let prompt = """
         [NO PROSE] [OUTPUT ONLY JSON] Based off the items provided, generate JSON corresponding to a single recipe for a meal made with them. It should look like:
-        [{ name: name, description: short, 2 sentence maximum description, ingredients: [Item array of ingredients] (formatted like {itemName: name, recipeAmount: amount, unit: unit} and units should match what the item already uses), steps: [String array of steps]}].
+        [{ name: name, description: short, 2 sentence maximum description, ingredients: [Item array of ingredients] (formatted like {itemName: name, recipeAmount: amount, unit: unit}. Units should be formated in a way that matches with this enum: enum Unit: {case, count, teaspoon, tablespoon, fluidOunce, cup, pint , quart, ounce, pound} and units should match what the item already uses), steps: [String array of steps]}].
         Here are the items: \(items)
         
         Aditionally, here are any exisiting reicpies. Ensure future recipies are not similar to exisitng ones: \(recipes)
