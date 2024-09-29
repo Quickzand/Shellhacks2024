@@ -66,7 +66,7 @@ class AppState : ObservableObject {
     
     func testRequest() {
 //        Pick a number between 1 and 5
-        var number = Int.random(in: 1...5)
+        var number = Int.random(in: 1...7)
         isLoading = true
         print("Starting scan of receipt\(number).png")
         if let imageData = UIImage(named: "receipt\(number).png")?.pngData() {
