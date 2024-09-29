@@ -313,7 +313,10 @@ class AppState : ObservableObject {
                     
                     // If the item's amount is now zero or less, remove it from the list
                     if item.amount <= 0 {
-                        items[itemIndex].amount = 0 
+                        items[itemIndex].amount = 0
+                        if(!groceries.contains(item)) {
+                            addToGroceries(item: item)
+                        }
                     } else {
                         // Otherwise, update the item in the list with the new amount
                         items[itemIndex] = item
