@@ -7,8 +7,6 @@
 
 import SwiftUI
 
-import SwiftUI
-
 struct ItemsView: View {
     @EnvironmentObject var appState : AppState
     @State var editEnabled : Bool = false
@@ -57,8 +55,6 @@ struct ItemCreationView: View {
     @State private var amount: Double = 0
     @State private var unit: String = ""
     
-    let units = ["Count", "Teaspoon (tsp)", "Tablespoon (tbsp)", "Fluid Ounce (fl oz)", "Cup", "Pint", "Quart", "Ounce", "Pound (lb)"]
-    
     var body: some View {
         Form {
             Section(header: Text("Item Details")) {
@@ -66,11 +62,11 @@ struct ItemCreationView: View {
                 Stepper(value: $amount, in: 0...1000) {
                     Text("Amount: \(amount)")
                 }
-                Picker("Unit", selection: $unit) {
-                    ForEach(units, id: \.self) { unit in
-                        Text(unit).tag(unit)
-                    }
+                Picker("Select Unit", selection: $unit) {
+                ForEach(Units.allCases) { unit in
+                    Text(unit.rawValue).tag(unit)
                 }
+            }
                 .pickerStyle(MenuPickerStyle())
                 .padding(.top, 4)
             }
