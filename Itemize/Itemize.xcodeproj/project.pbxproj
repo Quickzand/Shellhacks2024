@@ -14,6 +14,8 @@
 		34C5BCD12CA8274A004286DC /* receipt1.png in Resources */ = {isa = PBXBuildFile; fileRef = 34C5BCC62CA8274A004286DC /* receipt1.png */; };
 		34C5BD2F2CA89724004286DC /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C5BD2E2CA89724004286DC /* LoadingView.swift */; };
 		34C5BD7F2CA8C98C004286DC /* itemizeIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 34C5BD7E2CA8C98C004286DC /* itemizeIcon.png */; };
+		34C5BD842CA903D3004286DC /* receipt6.png in Resources */ = {isa = PBXBuildFile; fileRef = 34C5BD822CA903D3004286DC /* receipt6.png */; };
+		34C5BD852CA903D3004286DC /* receipt7.png in Resources */ = {isa = PBXBuildFile; fileRef = 34C5BD832CA903D3004286DC /* receipt7.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +46,8 @@
 		34C5BCCA2CA8274A004286DC /* receipt5.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = receipt5.png; sourceTree = "<group>"; };
 		34C5BD2E2CA89724004286DC /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		34C5BD7E2CA8C98C004286DC /* itemizeIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = itemizeIcon.png; sourceTree = "<group>"; };
+		34C5BD822CA903D3004286DC /* receipt6.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = receipt6.png; sourceTree = "<group>"; };
+		34C5BD832CA903D3004286DC /* receipt7.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = receipt7.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -99,6 +103,8 @@
 				34C5BCC92CA8274A004286DC /* receipt4.png */,
 				34C5BCCA2CA8274A004286DC /* receipt5.png */,
 				34C5BD7E2CA8C98C004286DC /* itemizeIcon.png */,
+				34C5BD822CA903D3004286DC /* receipt6.png */,
+				34C5BD832CA903D3004286DC /* receipt7.png */,
 				34BD3F422CA7C1A900BDE332 /* Itemize */,
 				34BD3F532CA7C1AA00BDE332 /* ItemizeTests */,
 				34BD3F5D2CA7C1AA00BDE332 /* ItemizeUITests */,
@@ -238,6 +244,8 @@
 			files = (
 				34C5BD7F2CA8C98C004286DC /* itemizeIcon.png in Resources */,
 				34C5BCCC2CA8274A004286DC /* receipt3.png in Resources */,
+				34C5BD842CA903D3004286DC /* receipt6.png in Resources */,
+				34C5BD852CA903D3004286DC /* receipt7.png in Resources */,
 				34C5BCCE2CA8274A004286DC /* receipt4.png in Resources */,
 				34C5BCCF2CA8274A004286DC /* receipt2.png in Resources */,
 				34C5BCD02CA8274A004286DC /* receipt5.png in Resources */,
