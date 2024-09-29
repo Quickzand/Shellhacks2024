@@ -59,10 +59,12 @@ struct LoadingView: View {
                         .multilineTextAlignment(.center)
                         .foregroundColor(.orange)
                     
-                    ForEach(0..<maxDots, id: \.self) { index in
-                        Text(".")
-                            .font(.system(size: 25, weight: .bold))
-                            .foregroundColor(.orange)
+                    if (!baseMessage.isEmpty) {
+                        ForEach(0..<maxDots, id: \.self) { index in
+                            Text(".")
+                                .font(.system(size: 25, weight: .bold))
+                                .foregroundColor(.orange)
+                        }
                     }
                 }
             }
