@@ -85,7 +85,8 @@ struct RecipeListItemView: View {
 // THIS NEEDS TO BE FIXED , when you add a random length recipe its like half the page. Add the ability to edit recipes
 struct RecipeDetailView: View {
     var recipe: Recipe // The selected recipe
-    
+    @EnvironmentObject var appState: AppState
+    @Environment(\.presentationMode) var presentationMode // To dismiss the popover
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
@@ -104,8 +105,15 @@ struct RecipeDetailView: View {
                     .font(.headline)
                     .fontWeight(.bold)
                 ForEach(recipe.ingredients, id: \.self) { ingredient in
-                    Text("• \(ingredient)")
+                    HStack {
+                        Text("• \(ingredient.name)")
+                        Spacer()
+                        Text("\(String(format: "%.2f", ingredient.recipeAmount))")
+                        Text(ingredient.unit.lowercased() == "count" ? "" :  ingredient.unit.lowercased())
+                        
+                    }
                         .font(.body)
+                        .textCase(.uppercase)
                 }
                 
                 Text("Steps:")
@@ -114,6 +122,20 @@ struct RecipeDetailView: View {
                     Text("\(index + 1). \(recipe.steps[index])")
                         .font(.body)
                         .lineLimit(nil) // Allow multiple lines
+                }
+                
+                Button {
+                    appState.completeRecipe(recipe: recipe)
+                    presentationMode.wrappedValue.dismiss()
+                } label: {
+                    Text("Complete Recipe")
+                        .font(.system(size:25, weight: .bold))
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .foregroundStyle(Color.white)
+                        .background(Color.blue)
+                        .cornerRadius(8)
+                        .padding()
                 }
             }
             .padding(.leading)
@@ -136,9 +158,9 @@ struct AddRecipeView: View {
     @State private var name: String = ""
     @State private var description: String = ""
     @State private var notes: String = ""
-    @State private var ingredients: [String] = [] // Array for ingredients
+    @State private var ingredients: [Item] = [] // Array for ingredients
     @State private var steps: [String] = [] // Array for steps
-    @State private var newIngredient: String = "" // For inputting a new ingredient
+    @State private var newIngredient: Item = Item() // For inputting a new ingredient
     @State private var newStep: String = "" // For inputting a new step
     @State private var showErrorAlert = false // State to control error alert
     @Environment(\.presentationMode) var presentationMode // To dismiss the popover
@@ -154,13 +176,29 @@ struct AddRecipeView: View {
 
                 Section(header: Text("Ingredients")) {
                     ForEach(ingredients, id: \.self) { ingredient in
-                        Text("• \(ingredient)")
+                        Text("• \(ingredient.name)")
                     }
+                    .onDelete(perform: {
+                        ingredients.remove(atOffsets: $0)
+                    })
                     HStack {
-                        TextField("New Ingredient", text: $newIngredient)
-                        Button(action: addIngredient) {
-                            Image(systemName: "plus")
+                        HStack() {
+                            Picker("Ingredient:", selection: $newIngredient) {
+                                ForEach(appState.items) { item in
+                                    Text("\(item.name)")
+                                        .tag(item)
+                                }
+                            }
+                            .pickerStyle(.menu)
                         }
+                        Spacer()
+                        Button(action: addIngredient) {
+                            HStack {
+                                Image(systemName: "plus")
+                                Text("Add")
+                            }
+                        }
+
                     }
                 }
 
@@ -196,6 +234,9 @@ struct AddRecipeView: View {
                     dismissButton: .default(Text("OK"))
                 )
             }
+            .onAppear {
+                newIngredient = appState.items.first!
+            }
         }
     }
     
@@ -210,9 +251,8 @@ struct AddRecipeView: View {
     }
     
     private func addIngredient() {
-        if !newIngredient.isEmpty {
-            ingredients.append(newIngredient.trimmingCharacters(in: .whitespaces))
-            newIngredient = "" // Clear the input field
+        if(!newIngredient.name.isEmpty) {
+            ingredients.append(newIngredient)
         }
     }
 
@@ -229,7 +269,7 @@ struct AddRecipeView: View {
         notes = ""
         ingredients = []
         steps = []
-        newIngredient = ""
+        newIngredient = Item()
         newStep = ""
     }
 }
@@ -242,7 +282,7 @@ struct EditRecipeView: View {
     @State private var name: String = ""
     @State private var description: String = ""
     @State private var notes: String = ""
-    @State private var ingredients: [String] = []
+    @State private var ingredients: [Item] = []
     @State private var steps: [String] = []
     
     var body: some View {
@@ -255,7 +295,7 @@ struct EditRecipeView: View {
             
             Section(header: Text("Ingredients")) {
                 ForEach(0..<ingredients.count, id: \.self) { index in
-                    TextField("Ingredient", text: $ingredients[index])
+                    TextField("Ingredient", text: $ingredients[index].name)
                 }
                 .onDelete(perform: deleteIngredient)
                 Button(action: addIngredient) {
@@ -300,7 +340,7 @@ struct EditRecipeView: View {
     }
     
     private func addIngredient() {
-        ingredients.append("") // Add an empty ingredient
+        ingredients.append(Item()) // Add an empty ingredient
     }
     
     private func deleteIngredient(at offsets: IndexSet) {
