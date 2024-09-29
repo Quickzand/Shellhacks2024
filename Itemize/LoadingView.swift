@@ -1,9 +1,11 @@
 import SwiftUI
 
 struct LoadingView: View {
-    var baseMessage: String = "Cooking up something tasty"
+    var possibleMessages : [String] = ["Cooking up something tasty", "Baking up something sweet", "Slicing up something fresh", "Grilling up something juicy", "Frying up something crispy", "Chefing up a stir fry", "Brewing the joe"]
     @State private var isAnimating = false
     @EnvironmentObject var appState: AppState
+    
+    public var hideMessage : Bool = false
 
     let maxDots = 3
 
@@ -54,12 +56,12 @@ struct LoadingView: View {
                 
                 // Loading message with animated fading dots
                 HStack(spacing: 5) {
-                    Text(baseMessage)
-                        .font(.system(size: 25, weight: .bold))
-                        .multilineTextAlignment(.center)
-                        .foregroundColor(.orange)
-                    
-                    if (!baseMessage.isEmpty) {
+                    if !hideMessage {
+                        Text(possibleMessages.randomElement() ?? "")
+                            .font(.system(size: 25, weight: .bold))
+                            .multilineTextAlignment(.center)
+                            .foregroundColor(.orange)
+                        
                         ForEach(0..<maxDots, id: \.self) { index in
                             Text(".")
                                 .font(.system(size: 25, weight: .bold))
