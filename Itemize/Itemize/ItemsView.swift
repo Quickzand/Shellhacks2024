@@ -8,27 +8,61 @@
 import SwiftUI
 
 struct ItemsView: View {
+    
     @EnvironmentObject var appState : AppState
     @State var editEnabled : Bool = false
-    var body: some View {
-        List {
-            ForEach(appState.items, id: \.id) { item in
-                ItemEditView(item: item, editItem: $editEnabled)
-            }
-            .onDelete(perform: deleteItem) // Adds swipe-to-delete functionality
+    
+    
+    enum Filter: String, CaseIterable, Identifiable {
+        case all = "All Items"
+        case inStock = "In Stock"
+        case outOfStock = "Out of Stock"
+        
+        var id: Self { self }
+    }
+    
+    @State private var selectedFilter: Filter = Filter.all
+
+    var filteredItems: [Item] {
+        switch selectedFilter {
+            case .inStock:
+                return appState.items.filter { $0.amount > 0 } // In Stock
+            case .outOfStock:
+                return appState.items.filter { $0.amount == 0 } // Out of Stock
+            case .all:
+                return appState.items
         }
-        .navigationTitle("Items")
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button {
-                    editEnabled.toggle()
-                } label: {
-                    Text(editEnabled ? "Done" : "Edit")
+    }
+    
+    var body: some View {
+        VStack {
+            Picker("Filter", selection: $selectedFilter) {
+                ForEach(Filter.allCases) { filter in
+                    Text(filter.rawValue.capitalized).tag(filter)
                 }
             }
-            ToolbarItem(placement: .navigationBarTrailing) {
-                NavigationLink(destination: ItemCreationView()) {
-                    Image(systemName: "plus")
+            .pickerStyle(SegmentedPickerStyle())
+            .padding()
+            
+            List {
+                ForEach(filteredItems, id: \.id) { item in
+                    ItemEditView(item: item, editItem: $editEnabled)
+                }
+                .onDelete(perform: deleteItem) // Adds swipe-to-delete functionality
+            }
+            .navigationTitle("Items")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button {
+                        editEnabled.toggle()
+                    } label: {
+                        Text(editEnabled ? "Done" : "Edit")
+                    }
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    NavigationLink(destination: ItemCreationView()) {
+                        Image(systemName: "plus")
+                    }
                 }
             }
         }
@@ -59,8 +93,8 @@ struct ItemCreationView: View {
         Form {
             Section(header: Text("Item Details")) {
                 TextField("Item Name", text: $name)
-                Stepper(value: $amount, in: 0...1000) {
-                    Text("Amount: \(amount)")
+                Stepper(value: $amount, in: 0...1000, step: 0.01) {
+                    Text("Amount: \(amount, specifier: "%.2f")")
                 }
                 Picker("Select Unit", selection: $unit) {
                 ForEach(Units.allCases) { unit in
