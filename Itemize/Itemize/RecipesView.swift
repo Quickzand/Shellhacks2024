@@ -111,10 +111,11 @@ struct RecipeDetailView: View {
                     .fontWeight(.bold)
                 ForEach(recipe.ingredients, id: \.self) { ingredient in
                     HStack {
-                        Text("• \(ingredient.name)")
-                        Spacer()
-                        Text("\(String(format: "%.2f", ingredient.recipeAmount))")
+                        Text("• \(String(format: "%.2f", ingredient.recipeAmount))")
                         Text(ingredient.unit.lowercased() == "count" ? "" :  ingredient.unit.lowercased())
+                        Text("\(ingredient.name)")
+                       
+                      
                         
                     }
                         .font(.body)

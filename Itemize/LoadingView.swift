@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct LoadingView: View {
-    var possibleMessages : [String] = ["Cooking up something tasty", "Baking up something sweet", "Slicing up something fresh", "Grilling up something juicy", "Frying up something crispy", "Chefing up a stir fry", "Brewing the joe"]
+    var possibleMessages : [String] = ["Cooking up somethi ng tasty", "Baking up something sweet", "Slicing up something fresh", "Grilling up something juicy", "Frying up something crispy", "Chefing up a stir fry", "Brewing the joe"]
     @State private var isAnimating = false
     @EnvironmentObject var appState: AppState
     
