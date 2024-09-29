@@ -42,7 +42,7 @@ struct ContentView: View {
     
     var body: some View {
         if showingSplashScreen {
-            LoadingView(baseMessage: "").onAppear {
+            LoadingView(hideMessage: true).onAppear {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
                                     withAnimation {
                                         showingSplashScreen = false
