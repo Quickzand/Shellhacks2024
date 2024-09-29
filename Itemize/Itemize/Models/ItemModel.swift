@@ -14,4 +14,5 @@ struct Item : Hashable, Identifiable {
     var unit : String = ""
     var acquired = false
     var recipeAmount : Double = 0
+    var emoji : String = ""
 }
